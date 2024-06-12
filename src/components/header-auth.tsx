@@ -5,11 +5,19 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import {Button} from "@/components/ui/button";
 import {LogOut} from "lucide-react";
 import {Avatar, AvatarImage} from "@/components/ui/avatar";
+import {startTransition} from "react";
 
 export default function HeaderAuth() {
   const session = useSession();
+
   if(session.status === 'loading') {
     return null
+  }
+
+  const signOut = () => {
+    startTransition(async () => {
+      await actions.signOut()
+    })
   }
   if(session.data?.user) {
     return  <DropdownMenu>
@@ -19,9 +27,10 @@ export default function HeaderAuth() {
         </Avatar>
       </DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DropdownMenuItem>
-        <LogOut className="mr-2 h-4 w-4" />
-        <span>Log out</span>
+      <DropdownMenuItem onClick={signOut}>
+
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
 
       </DropdownMenuItem>
     </DropdownMenuContent>

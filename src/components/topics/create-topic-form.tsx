@@ -1,16 +1,41 @@
-'use client';
+'use client'
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
 import {Textarea} from "@/components/ui/textarea";
 
 import * as actions from '@/actions';
-import {useFormState} from "react-dom";
+import {z} from "zod";
+import {useForm} from "react-hook-form";
+import {useFormState} from 'react-dom';
+
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {useRef} from "react";
+
+
+const createTopicSchema = z.object({
+    name: z.string().trim().min(3).regex(/^[a-z-]+$/, {
+        message: 'Must be lowercase with dash and no spaces'
+    }),
+    description: z.string().trim().min(10,
+        'Longer (10) description is required')
+})
 
 export default function TopicCreateForm() {
-    const [formState, action] = useFormState(actions.createTopic,{errors: {}})
-    return <Dialog>
+   const [state, formAction] = useFormState(actions.createTopic, {
+       errors: {}
+   })
+    const form = useForm<z.output<typeof createTopicSchema>>({
+        resolver: zodResolver(createTopicSchema),
+        defaultValues: {
+            name: "",
+            description: ''
+        }
+    })
+    const formRef= useRef<HTMLFormElement>(null)
+
+ return <Dialog>
         <DialogTrigger asChild>
             <Button>Create a Topic</Button>
         </DialogTrigger>
@@ -18,31 +43,37 @@ export default function TopicCreateForm() {
             <DialogHeader>
                 <DialogTitle>Create a Topic</DialogTitle>
             </DialogHeader>
-            <form className="space-y-4" action={action}>
+            <Form {...form}>
+            <form ref={formRef} className="space-y-4"
+                  action={formAction}
+            >
                 <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input name="name" placeholder="New Topic" id="name"/>
-                    {
-                        formState.errors.name ?
-                            <ul className="bg-red-200 p-2 border rounded border-red-400">
-                                {formState.errors.name.map((e, i) => <li key={`error-name-${i}`}>{e}</li>)}
-                            </ul>: null
-                    }
+                <FormField control={form.control} name="name"
+                render={({field}) => (<FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                        <Input placeholder="topic-name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>)}>
+
+                </FormField>
                 </div>
                 <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                    className="resize-none"
-                    placeholder="Describe your topic here" name="description" id="description" />
-                    {
-                        formState.errors.description ?
-                            <ul className="bg-red-200 p-2 border rounded border-red-400">
-                                {formState.errors.description.map((e, i) => <li key={`error-desc-${i}`}>{e}</li>)}
-                            </ul>: null
-                    }
+                <FormField control={form.control} name="description"
+                                 render={({field}) => (<FormItem>
+                                     <FormLabel>Description</FormLabel>
+                                     <FormControl>
+                                         <Textarea placeholder="Describe your topic here" {...field} />
+                                     </FormControl>
+                                     <FormMessage />
+                                 </FormItem>)}>
+
+                </FormField>
             </div>
                 <Button type="submit" className="w-full">Create</Button>
             </form>
+            </Form>
         </DialogContent>
     </Dialog>
 }
