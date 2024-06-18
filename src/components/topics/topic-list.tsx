@@ -8,12 +8,12 @@ export default async function TopicList() {
 
   const renderedTopic = topics.map((topic) => {
     return <Link key={topic.id} href={paths.topicShowPath(topic.slug)} className="">
-        <Badge variant="secondary">{topic.slug}</Badge>
+        <Badge variant="secondary" className="shadow" >{topic.slug}</Badge>
       </Link>
 
   })
 
-  return <div className="flex gap-3">
+  return <div className="flex gap-3 flex-col">
     {renderedTopic}
   </div>
 }

@@ -16,7 +16,7 @@ export default async function Home() {
               </CardHeader>
               <Separator />
               <CardContent className="p-2 flex flex-col gap-2">
-                <div className="font-semibold">Order Details</div>
+                <div className="font-semibold">Topics</div>
                 <TopicList/>
               </CardContent>
 
