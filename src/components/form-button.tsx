@@ -10,9 +10,10 @@ interface FormButtonProps {
 
 export default function FormButton({children}: FormButtonProps) {
   const {pending} = useFormStatus()
-  return <Button type="submit" className="w-full">
+  console.log(`pending ${pending} pending`)
+  return <Button type="submit" className="w-full" disabled={pending} aria-disabled={pending} >
     {
-      pending && <Loader />
+      pending && <Loader className="animate-spin mr-2" />
     }
     {children}
   </Button>;
