@@ -6,7 +6,6 @@ import {PostWithData} from "@/db/queries/post-query";
 interface PostListProps {
   fetchPosts: () => Promise<PostWithData[]>;
 }
-// TODO: Get list of posts into this component somehow
 export default async  function PostList({fetchPosts}: PostListProps) {
   const posts = await fetchPosts()
   const renderedPosts = posts.map((post) => {
