@@ -1,13 +1,16 @@
 import Image from "next/image";
 import CommentCreateForm from "@/components/comments/comment-create-form";
-import {CommentWithAuthor} from "@/db/queries/comment-query";
+import {fetchCommentForPost} from "@/db/queries/comment-query";
+import {Card, CardContent} from "@/components/ui/card";
+import {Avatar, AvatarImage} from "@/components/ui/avatar";
 
 interface CommentShowProps {
   commentId: string,
-  comments: CommentWithAuthor[]
+  postId: string,
 }
 
-export default function CommentShow({ commentId , comments}: CommentShowProps) {
+export default async function CommentShow({ commentId , postId}: CommentShowProps) {
+  const comments= await fetchCommentForPost(postId)
   const comment = comments.find((c) => c.id === commentId);
 
   if (!comment) {
@@ -17,12 +20,25 @@ export default function CommentShow({ commentId , comments}: CommentShowProps) {
   const children = comments.filter((c) => c.parentId === commentId);
   const renderedChildren = children.map((child) => {
     return (
-      <CommentShow key={child.id} commentId={child.id} comments={comments} />
+      <CommentShow key={child.id} commentId={child.id} postId={postId} />
     );
   });
 
   return (
-    <div className="p-2 border rounded-lg mt-2 mb-1">
+    <Card>
+      <CardContent className="pt-2 space-y-2">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Avatar className="h-5 w-5">
+            <AvatarImage src={comment.user.image || ""}/>
+          </Avatar>
+          <span className="">{comment.user.name}</span>
+        </div>
+        <p className="text-sm">{comment.content}</p>
+        <CommentCreateForm postId={comment.postId} parentId={comment.id}/>
+        <div className="pl-4">{renderedChildren}</div>
+      </CardContent>
+    </Card>
+    /*<div className="p-2 border rounded-lg mt-2 mb-1">
       <div className="flex gap-3">
         <Image
           src={comment.user.image || ""}
@@ -41,6 +57,6 @@ export default function CommentShow({ commentId , comments}: CommentShowProps) {
         </div>
       </div>
       <div className="pl-4">{renderedChildren}</div>
-    </div>
+    </div>*/
   );
 }

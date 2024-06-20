@@ -6,6 +6,7 @@ import {
   BreadcrumbList, BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import paths from "@/path";
 interface PostBreadcrumbs {
   slug: string
 }
@@ -17,7 +18,7 @@ export default function PostsBreadcrumbs({ slug }: PostBreadcrumbs) {
       </BreadcrumbItem>
       <BreadcrumbSeparator />
       <BreadcrumbItem>
-        <BreadcrumbPage >{slug}</BreadcrumbPage>
+        <BreadcrumbLink href={paths.topicShowPath(slug)}>{slug}</BreadcrumbLink>
       </BreadcrumbItem>
     </BreadcrumbList>
   </Breadcrumb>
